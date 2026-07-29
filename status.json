@@ -1,0 +1,79 @@
+{
+  "schema_version": "1.0",
+  "project": "Construction AI OS",
+  "summary": "The eight main services are built and tested separately. The team is now proving they can run together safely, recover from failures, and support the first real client workflow.",
+  "last_updated": "2026-07-29",
+  "updated_by": "orchestrator",
+  "pilot_ready": false,
+  "current": {
+    "phases": ["P1", "P2"],
+    "milestone": "WF02 I1 - deployment packaging and operational runbooks",
+    "milestone_state": "statically_accepted_operational_gates_open",
+    "one_line": "Proving the eight services can run together safely and take WF02, the client-maintained submittal log, through the full process."
+  },
+  "phases": [
+    {
+      "id": "P0",
+      "name": "Client-data lock",
+      "status": "mostly_complete",
+      "note": "All major pilot samples received. Open items are naming and authority rules, As-Built sheet mapping, and the live submittal-source folder path."
+    },
+    {
+      "id": "P1",
+      "name": "Trustworthy deployment spine",
+      "status": "active",
+      "note": "The services exist separately. Staging, a full end-to-end test, and client setup are still open."
+    },
+    {
+      "id": "P2",
+      "name": "Trusted records",
+      "status": "active",
+      "note": "Current phase. WF02 contracts, producer, persistence/history and cross-repo compatibility accepted and pushed."
+    },
+    { "id": "P3", "name": "Core quality operating loop", "status": "not_started" },
+    { "id": "P4", "name": "Pilot extension", "status": "not_started" },
+    { "id": "P5", "name": "Pilot hardening and release", "status": "not_started" }
+  ],
+  "next_up": [
+    { "order": 1, "id": "WF02-I1", "title": "Finish the WF02 I1 operating checks and publishing steps", "phase": "P1" },
+    { "order": 2, "id": "WF02-STAGED", "title": "WF02 staged pilot integration and readiness", "phase": "P1/P2", "blocked_by": ["B1", "B3"] },
+    { "order": 3, "id": "WF03", "title": "Registry Reconciliation against real QWP/RAR/approval chain", "phase": "P2" },
+    { "order": 4, "id": "WF02-READ", "title": "Submittal gateway and dashboard read path", "phase": "P2" },
+    { "order": 5, "id": "WF02-EDIT", "title": "Audited register editing and Submittal-number rename", "phase": "P2" },
+    { "order": 6, "id": "WF04", "title": "Revision Intelligence", "phase": "P2" },
+    { "order": 7, "id": "WF11", "title": "Email Intelligence", "phase": "P2" },
+    { "order": 8, "id": "WF05", "title": "Limited RFI capability (optional support)", "phase": "P2" }
+  ],
+  "blockers": [
+    { "id": "B1", "title": "Docker/PostgreSQL operational gates unexecuted; no staging environment configured", "side": "internal", "blocks": ["WF02-I1", "P1"] },
+    { "id": "B2", "title": "Production backup encryption tooling not yet fully verified in place", "side": "internal", "blocks": ["WF02-I1"] },
+    { "id": "B3", "title": "Exact live submittal-source folder path not supplied", "side": "client", "blocks": ["WF02-STAGED"] },
+    { "id": "B4", "title": "Project/location naming, staff authority, document precedence, notification and acceptance rules unconfirmed", "side": "client", "blocks": ["P2", "P3"] },
+    { "id": "B5", "title": "Sheet-level As-Built mapping unvalidated against the specified tracker range", "side": "client", "blocks": ["as-built-projection"] },
+    { "id": "B6", "title": "Client Oracle admin has not confirmed Unifier REST services are enabled", "side": "client", "blocks": ["unifier-connector-golive"] }
+  ],
+  "candidate_commits": {
+    "note": "WF02 I1 accepted package commits are on remote review branches. The API base is also on origin/main. This is not evidence of staging integration or deployment.",
+    "construction-document-api": "6d23789",
+    "construction-document-pipeline": "d3554ae",
+    "construction-rules-engine": "dced448"
+  },
+  "repos": [
+    { "name": "construction-shared-contracts", "role": "Canonical schemas and language bindings", "last_commit": "561e569", "last_activity": "2026-07-21" },
+    { "name": "construction-sync-agent", "role": "SMB / file-share ingestion", "last_commit": "50ef144", "last_activity": "2026-07-22" },
+    { "name": "unifier-connector", "role": "Oracle Unifier connector", "last_commit": "5e8dcdd", "last_activity": "2026-07-13" },
+    { "name": "construction-email-agent", "role": "Microsoft Graph mailbox ingestion", "last_commit": "ec1a61d", "last_activity": "2026-07-14" },
+    { "name": "construction-document-api", "role": "Ingress API: upload, dedupe, versioning, storage, queue, audit", "last_commit": "77db2fb", "last_activity": "2026-07-28" },
+    { "name": "construction-document-pipeline", "role": "Parse, classify, extract, confidence, review", "last_commit": "d3554ae", "last_activity": "2026-07-22" },
+    { "name": "construction-rules-engine", "role": "Rules, register materialization, history, replay, reconciliation", "last_commit": "dced448", "last_activity": "2026-07-22" },
+    { "name": "construction-dashboard", "role": "Next.js UI for Project QM and Corporate QM", "last_commit": "334af43", "last_activity": "2026-07-18" }
+  ],
+  "completed_foundation": [
+    { "id": "M0", "title": "Repository baseline and shared-contract process" },
+    { "id": "M1", "title": "Ingress: sync agent + Document API", "verified": "2026-07-13, live local Compose stack" },
+    { "id": "M2", "title": "Email agent via Microsoft Graph", "verified": "2026-07-14, real Microsoft Graph", "caveats": ["webhook live-validation deferred", "Application Access Policy not applied on test tenant"] },
+    { "id": "M3", "title": "Document pipeline: parse, classify, extract", "verified": "cleared 95% accuracy gate" },
+    { "id": "M4", "title": "Rules and registers", "caveats": ["milestone acceptance against a real client log still pending"] },
+    { "id": "M5", "title": "Dashboard surfaces", "caveats": ["contract-fixture backed, not production integration"] }
+  ]
+}

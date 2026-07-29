@@ -1,0 +1,28 @@
+# This repo holds status documents only. Keep everything else out.
+
+# Local/secret material — must never land here
+*.local.*
+.env
+.env.*
+*.key
+*.pem
+credentials*
+secrets*
+
+# Client source documents and evidence belong in the working repo, not the status mirror
+*.xlsx
+*.xlsm
+*.pdf
+*.docx
+*.zip
+
+# Scheduled-run logs — local only, regenerated every run
+.codex/logs/
+
+# OS / editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.swp
