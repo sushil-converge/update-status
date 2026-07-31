@@ -1,6 +1,6 @@
 # Project Status — Construction AI OS
 
-> **last_updated: 2026-07-29**
+> **last_updated: 2026-07-31**
 > **current_phase: P1 (deployment foundation) + P2 (trusted records), running in parallel**
 > **current_milestone: WF02 I1 — deployment package and operating guides**
 > **pilot_ready: no**
@@ -22,9 +22,9 @@ platform is not pilot-ready.**
 
 ## What we're working on right now
 
-### WF02 I1 — deployment package and operating guides
+### WF02 I1 — deployment package, operating guides, and integration proof
 
-**State:** accepted in code and design review; operating checks are still open.
+**State:** accepted base package; operating checks are still open.
 
 The team has reviewed and accepted the way the services are packaged, started, separated by
 permission, and protected from unsafe database changes. The checks that do not require Docker or
@@ -39,18 +39,22 @@ deployed:
 | `construction-document-pipeline` | Accepted commit `d3554ae` is on a remote review branch |
 | `construction-rules-engine` | Accepted commit `dced448` is on a remote review branch |
 
-Recent work has focused on backup encryption, access permissions, pipeline stability, and recording
-failed and successful operating drills. The latest verified activity is API commit `77db2fb` on
-2026-07-28.
+Today, four commits on the API verification branch strengthened the operating-test harness: local
+image checks, process-local Git trust, Docker-shim handling, and deterministic offline dependency
+validation (`e2e315f`, `330d9a0`, `b3e8267`, `b52f504`). These changes are verified locally; they
+are not evidence of remote integration, staging deployment, or pilot readiness. A later offline
+recovery validation passed without network or Docker use.
 
 **To finish WF02 I1, we still need to:**
 
 - Approve and verify the tool that encrypts production backups.
-- Run the Docker/PostgreSQL checks for build, database setup, readiness, backup and recovery,
-  replay, permissions, schedules, and rollback.
+- Run and record the Docker/PostgreSQL checks for build, database setup, readiness, backup and
+  recovery, replay, permissions, schedules, and rollback. The earlier governed drill stopped in
+  the test harness before those scenarios began; a fresh successful run is still required.
 - Configure a staging environment. There is no staging environment yet.
 
-**No movement since 2026-07-28.** Still blocked on: B1, B2, B3, B4, B5, B6.
+**Movement on 2026-07-31:** local test-harness and offline-validation reliability work completed.
+Still blocked on: B1, B2, B3, B4, B5, B6.
 
 ---
 
