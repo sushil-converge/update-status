@@ -1,6 +1,6 @@
 # Project Status — Construction AI OS
 
-> **last_updated: 2026-07-31**
+> **last_updated: 2026-08-02**
 > **current_phase: P1 (deployment foundation) + P2 (trusted records), running in parallel**
 > **current_milestone: WF02 I1 — deployment package and operating guides**
 > **pilot_ready: no**
@@ -55,6 +55,9 @@ recovery validation passed without network or Docker use.
 
 **Movement on 2026-07-31:** local test-harness and offline-validation reliability work completed.
 Still blocked on: B1, B2, B3, B4, B5, B6.
+
+**Movement on 2026-08-02:** no verified code commits, task artifacts, or validation results were
+found in the Construction workspace. The reported milestone state and blockers are unchanged.
 
 ---
 
