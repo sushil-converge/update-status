@@ -56,8 +56,11 @@ recovery validation passed without network or Docker use.
 **Movement on 2026-07-31:** local test-harness and offline-validation reliability work completed.
 Still blocked on: B1, B2, B3, B4, B5, B6.
 
-**Movement on 2026-08-02:** no verified code commits, task artifacts, or validation results were
-found in the Construction workspace. The reported milestone state and blockers are unchanged.
+**Movement on 2026-08-02:** verified S1a gateway-session work advanced through `b463636`.
+It adds server-scoped dashboard sessions and a repeatable local demo path. Evidence records a
+release build, formatting checks, 22 core-unit tests, 9 targeted integration tests, and green CI
+(38 tests). It remains candidate evidence: independent acceptance, merge, staging deployment,
+and cloud-issuer proof are still open. Dashboard documentation candidate `1e071aa` is local only.
 
 ---
 
