@@ -113,7 +113,10 @@ if ($survivors.Count -gt 0) {
 # A redaction that strips the page to nothing is also a failure. These are heading PREFIXES,
 # not whole headings, so rewording the tail of a heading does not trip the guard — only an
 # actually-missing section does. If you rename a section, update the prefix here too.
-foreach ($needed in @('<h2>Where we are', '<h2>Checkpoints', '<h2>Four depths', '<h2>The work plan', '<h2>Blockers', '<h2>Risks')) {
+foreach ($needed in @(
+        '<h2>Where the project stands', '<h2>Already built', '<h2>What remains',
+        '<h2>What is holding things up', '<h2>Checkpoints', '<h2>Four depths',
+        '<h2>The work plan', '<h2>Blockers', '<h2>Risks')) {
     if ($redacted -notmatch [regex]::Escape($needed)) {
         throw "REDACTION OVERREACHED — a section starting '$needed' is missing from the redacted page. Not deploying."
     }

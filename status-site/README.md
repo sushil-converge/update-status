@@ -1,12 +1,31 @@
-# Demo status — shareable link
+# Project status — shareable link
 
-Serves the demo status page at an unguessable URL, in the same shape as the Boardly links:
+Serves the status page at an unguessable URL, in the same shape as the Boardly links:
 
 ```
 https://construction-demo-status.<your-subdomain>.workers.dev/b/<slug>
 ```
 
 The bare root 404s deliberately, so the hostname on its own gives nothing away.
+
+## What the page shows
+
+Two tracks, in one page: **the whole pilot on top** (from `../status.json`), then **the 15-day
+demo sprint** beneath it (from `../demo-status.json`).
+
+Progress is a row of **named stages** — done, current, remaining — and never a percentage.
+`CLAUDE.md`, `UPDATING.md` and `AGENTS.md` all forbid estimating completeness, and a filled bar
+is an estimate wearing a number. An earlier version filled the bar with `day / 15`, which
+measured elapsed time rather than work done and would have read 100% on the final day with
+nothing built.
+
+The page is written for a reader who is **not** on the build team. Because neither JSON is written
+that way, `render-demo-status.ps1` carries plain-English lookup tables keyed by stable ids —
+`WfDesc`, `PhaseNames`, `GatePlain`, `RoundPlain` and the rest. Each entry is sourced (glossary,
+`STATUS.md`, or the workflow registry) rather than invented, and every lookup falls back to the
+raw JSON text if an id is missing, so new data degrades to honest-but-technical rather than
+vanishing. **If you add an item to either JSON, add its plain wording to the matching table** —
+otherwise it renders in build-team language.
 
 ## Setup, once
 
@@ -103,8 +122,9 @@ configuration change rather than a rewrite.
 
 | File | Role |
 |---|---|
-| `../demo-status.json` | **Source of truth.** Edit this. |
-| `../scripts/render-demo-status.ps1` | JSON → HTML |
+| `../status.json` | **Source of truth — the pilot.** Drives the stage row and what-remains. |
+| `../demo-status.json` | **Source of truth — the 15-day demo.** Drives the lower half. |
+| `../scripts/render-demo-status.ps1` | both JSONs → HTML |
 | `build-and-deploy.ps1` | render → bake both variants → deploy |
 | `redactions.local.json` | **local only, never committed** — the redaction patterns |
 | `src/index.js` | the Worker: slug routing, `noindex`, short cache |
