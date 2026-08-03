@@ -1,6 +1,6 @@
 # Project Status — Construction AI OS
 
-> **last_updated: 2026-08-02**
+> **last_updated: 2026-08-03**
 > **current_phase: P1 (deployment foundation) + P2 (trusted records), running in parallel**
 > **current_milestone: WF02 I1 — deployment package and operating guides**
 > **pilot_ready: no**
@@ -12,11 +12,11 @@
 
 ## In one paragraph
 
-The eight main services have been built and tested separately. We are now proving that they can run
-together safely, recover from failures, and handle the first real client workflow: **WF02**, the
-client-maintained submittal log. The basic design and deployment package have passed review, but the
-live operating checks are not finished. **Nothing is connected to the client's live source folder, and the
-platform is not pilot-ready.**
+The eight main services have been built and tested separately. Today, the API, shared contracts, and
+dashboard gained scoped read paths and a real submittal surface for **WF02**, the client-maintained
+submittal log. The basic design and deployment package have passed review, but live operating checks
+are not finished. **Nothing is connected to the client's live source folder, and the platform is not
+pilot-ready.**
 
 ---
 
@@ -61,6 +61,14 @@ It adds server-scoped dashboard sessions and a repeatable local demo path. Evide
 release build, formatting checks, 22 core-unit tests, 9 targeted integration tests, and green CI
 (38 tests). It remains candidate evidence: independent acceptance, merge, staging deployment,
 and cloud-issuer proof are still open. Dashboard documentation candidate `1e071aa` is local only.
+
+**Movement on 2026-08-03:** merged API reads `0aea15a` (submittal register) and `c65db8c`
+(quarantine), with matching shared-contract merges `04f9eb3` and `bdd7b31`. Dashboard commit
+`0dda204` adds the real submittal surface. GitHub checks for these commits succeeded (API Windows
+core and Docker build; contracts .NET and Python; dashboard build-and-test and verification).
+This is implementation and CI evidence only: staging, full operating proof, and pilot readiness
+remain open. A redacted demo status site was also deployed in `9b08d79` with successful endpoint
+and redaction checks.
 
 ---
 
@@ -140,14 +148,14 @@ These are useful foundations, but they do **not** mean the full platform is depl
 
 | Repo | Plain-language role | Last activity |
 |---|---|---|
-| `construction-shared-contracts` | Shared data formats used by every service | 2026-07-21 `561e569` |
+| `construction-shared-contracts` | Shared data formats used by every service | 2026-08-03 `bdd7b31` |
 | `construction-sync-agent` | Reads files from the shared folder | 2026-07-22 `50ef144` |
 | `unifier-connector` | Connects to Oracle Unifier | 2026-07-13 `5e8dcdd` |
 | `construction-email-agent` | Reads approved Microsoft 365 mailboxes | 2026-07-14 `ec1a61d` |
-| `construction-document-api` | Receives files and records their history | 2026-07-28 `77db2fb` |
+| `construction-document-api` | Receives files and records their history | 2026-08-03 `c65db8c` |
 | `construction-document-pipeline` | Reads and classifies document contents | 2026-07-22 `d3554ae` |
 | `construction-rules-engine` | Applies rules and updates registers | 2026-07-22 `dced448` |
-| `construction-dashboard` | User screens for Project and Corporate QMs | 2026-07-18 `334af43` |
+| `construction-dashboard` | User screens for Project and Corporate QMs | 2026-08-03 `0dda204` |
 
 ---
 
