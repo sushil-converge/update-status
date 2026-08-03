@@ -50,6 +50,44 @@ function StateClass([string] $State) {
     }
 }
 
+# WF code -> plain-English name, so a reader who does not live in the WF numbering can tell
+# what each workflow actually is. Taken VERBATIM from GLOSSARY.md — this table must not
+# invent names. A code with no glossary entry renders bare rather than being guessed at, and
+# should be added to GLOSSARY.md first.
+$WfNames = @{
+    'WF01' = 'Quality Work Control'
+    'WF02' = 'Submittal log'
+    'WF03' = 'Registry Reconciliation'
+    'WF04' = 'Revision Intelligence'
+    'WF05' = 'RFI capability'
+    'WF06' = 'NCR extraction and trends'
+    'WF07' = 'Inspection and ITP Tracker'
+    'WF09' = 'Punch Evidence'
+    'WF11' = 'Email Intelligence'
+    'WF12' = 'Two-Week Lookahead Parser'
+    'WF13' = 'Assignment and Evidence Tracker'
+    'WF14' = 'Morning Brief'
+    'WF16' = 'Daily Quality Report Intelligence'
+    'WF18' = 'Role Dashboards'
+    'WF24' = 'Deterministic safeguards'
+}
+function WfName([string] $Code) {
+    $c = ([string]$Code).Trim()
+    if ($WfNames.ContainsKey($c)) { $WfNames[$c] } else { $null }
+}
+
+# Raw JSON state values are snake_case and a couple are insider shorthand. Render them as
+# words. 'verify' in particular does NOT mean the work is suspect — it means this file has
+# not been reconciled against the repos yet (see note_on_freshness), so it is spelled out.
+function StateLabel([string] $State) {
+    switch ($State) {
+        'in_progress' { 'in progress' }
+        'not_started' { 'not started' }
+        'verify'      { 'not yet confirmed' }
+        default       { ([string]$State) -replace '_', ' ' }
+    }
+}
+
 $daysLeft = try {
     [int]([datetime]::Parse($data.demo_date) - [datetime]::Parse($data.last_updated)).TotalDays
 } catch { $null }
@@ -97,6 +135,14 @@ W @'
         color:#e8c9b0;font-size:13px;margin:10px 0}
   ul.never{margin:6px 0 0;padding-left:20px;color:var(--dim);font-size:13px}
   ul.never li{margin:4px 0}
+  .bar{height:7px;background:var(--line);border-radius:999px;margin:14px 0 2px;overflow:hidden}
+  .bar span{display:block;height:100%;background:var(--accent);border-radius:999px}
+  .statrow{display:flex;gap:26px;flex-wrap:wrap;align-items:baseline}
+  ul.wf{margin:8px 0 0;padding:0;list-style:none}
+  ul.wf li{font-size:12.5px;color:var(--dim);padding:2px 0}
+  ul.wf li b{color:var(--accent);font-family:ui-monospace,Consolas,monospace;font-weight:500}
+  .lede{font-size:15px;color:var(--fg);margin:0}
+  .subtle{color:var(--dim);font-size:13px;margin:14px 0 0}
   footer{margin-top:44px;color:var(--idle);font-size:12px;border-top:1px solid var(--line);padding-top:14px}
 </style></head><body><div class="wrap">
 '@
@@ -109,41 +155,91 @@ W ("<div class='sub'>Updated {0} · demo {1}{2} · day {3} of {4}</div>" -f
 
 W ("<div class='card' style='margin-bottom:18px'><p>{0}</p></div>" -f (HtmlEncode $data.summary))
 
+# ---- where we are / what's next
+# Everything here is derived from the JSON, never asserted: the checkpoint counts are
+# tallied from gates[], and "next" is simply the earliest gate not yet passed. No
+# percentage-complete is shown — this project does not track one (see CLAUDE.md).
+$gatesAll    = @($data.gates)
+$gatesPassed = @($gatesAll | Where-Object { $_.state -eq 'passed' }).Count
+$nextGate    = @($gatesAll | Where-Object { $_.state -ne 'passed' } | Sort-Object day)[0]
+$pct         = if ($data.current.of -gt 0) { [int](100 * $data.current.day / $data.current.of) } else { 0 }
+
+W '<h2>Where we are</h2>'
+W "<div class='card'>"
+W "<div class='statrow'>"
+W ("<div class='metric'>Day {0} <small>of {1}</small></div>" -f (HtmlEncode $data.current.day), (HtmlEncode $data.current.of))
+W ("<div class='metric'>{0} <small>of {1} checkpoints passed</small></div>" -f $gatesPassed, $gatesAll.Count)
+if ($null -ne $daysLeft) {
+    W ("<div class='metric'>{0} <small>days until the demo</small></div>" -f $daysLeft)
+}
+W '</div>'
+W ("<div class='bar'><span style='width:{0}%'></span></div>" -f $pct)
+W ("<p class='lede' style='margin-top:14px'>{0}</p>" -f (HtmlEncode $data.current.one_line))
+W ("<p class='subtle'><b>Being worked on right now:</b> {0}</p>" -f (HtmlEncode $data.current.focus))
+W '</div>'
+
+if ($nextGate) {
+    W ("<div class='note'><b>Next checkpoint — day {0} ({1}).</b> {2}</div>" -f
+        $nextGate.day, (HtmlEncode $nextGate.date), (HtmlEncode $nextGate.gate))
+}
+
 # ---- headline
 W '<h2>The headline</h2>'
 W ("<div class='hero'><div class='id'>{0}</div><p style='margin-top:6px;color:var(--dim)'>{1}</p></div>" -f
     (HtmlEncode $data.headline.submittal), (HtmlEncode $data.headline.why))
 
 # ---- day strip
-W '<h2>Fifteen days</h2><div class="days">'
+# Heading names what the strip actually shows. It lists the checkpoint days, not all fifteen
+# days, so "Fifteen days" over eight boxes read as a miscount.
+W ("<h2>Checkpoints — {0} of them across {1} days</h2>" -f $gatesAll.Count, (HtmlEncode $data.current.of))
+W '<div class="days">'
 foreach ($g in $data.gates) {
     $cls = if ($g.state -eq 'passed') { 'day done' } elseif ($g.day -eq $data.current.day) { 'day now' } else { 'day' }
     W ("<div class='{0}'><b>{1}</b>{2}</div>" -f $cls, $g.day, (HtmlEncode $g.date))
 }
 W '</div>'
-W '<table><tr><th>Day</th><th>Gate</th><th>State</th></tr>'
+W '<table><tr><th>Day</th><th>What has to be true by then</th><th>State</th></tr>'
 foreach ($g in $data.gates) {
     W ("<tr><td>{0}</td><td>{1}</td><td><span class='pill {2}'>{3}</span></td></tr>" -f
-        $g.day, (HtmlEncode $g.gate), (StateClass $g.state), (HtmlEncode $g.state))
+        $g.day, (HtmlEncode $g.gate), (StateClass $g.state), (HtmlEncode (StateLabel $g.state)))
 }
 W '</table>'
 
 # ---- tiers
+# Workflows are listed one per line with their glossary name in brackets — "WF02 (Submittal
+# log)" — because a bare code tells a reader outside the project nothing.
 W '<h2>Four depths</h2><div class="grid">'
 foreach ($t in $data.tiers) {
-    W ("<div class='card'><h3>{0} — {1} <span class='pill {2}'>{3}</span></h3><p>{4}</p><p style='margin-top:8px'><code>{5}</code></p></div>" -f
-        (HtmlEncode $t.id), (HtmlEncode $t.name), (StateClass $t.status), (HtmlEncode $t.status),
-        (HtmlEncode $t.meaning), (HtmlEncode ($t.workflows -join ' · ')))
+    W ("<div class='card'><h3>{0} — {1} <span class='pill {2}'>{3}</span></h3><p>{4}</p>" -f
+        (HtmlEncode $t.id), (HtmlEncode $t.name), (StateClass $t.status), (HtmlEncode (StateLabel $t.status)),
+        (HtmlEncode $t.meaning))
+    W '<ul class="wf">'
+    foreach ($w in $t.workflows) {
+        $nm = WfName $w
+        if ($nm) { W ("<li><b>{0}</b> ({1})</li>" -f (HtmlEncode $w), (HtmlEncode $nm)) }
+        else     { W ("<li><b>{0}</b></li>" -f (HtmlEncode $w)) }
+    }
+    W '</ul></div>'
 }
 W '</div>'
 W ("<div class='note'><b>Cut order.</b> {0}</div>" -f (HtmlEncode $data.cut_order))
 
 # ---- rounds
-W '<h2>Rounds</h2><table><tr><th>Round</th><th>What</th><th>Repo</th><th>Day</th><th>State</th></tr>'
-foreach ($r in $data.rounds) {
-    W ("<tr><td><code>{0}</code></td><td>{1}</td><td>{2}</td><td>{3}</td><td><span class='pill {4}'>{5}</span></td></tr>" -f
-        (HtmlEncode $r.id), (HtmlEncode $r.title), (HtmlEncode $r.repo), $r.day,
-        (StateClass $r.state), (HtmlEncode $r.state))
+# Ordered by the day it starts, so the table reads as a plan rather than a list. Anything
+# blocked names what is blocking it inline — a plan that hides its blockers is misleading.
+W '<h2>The work plan — in the order it gets built</h2>'
+W ("<p class='subtle' style='margin:0 0 10px'>Each row is one round of work: built, reviewed, then accepted or rejected. " +
+   "Day is when it starts, not when it finishes.</p>")
+W '<table><tr><th>Day</th><th>What gets built</th><th>Round</th><th>State</th></tr>'
+foreach ($r in ($data.rounds | Sort-Object day)) {
+    $blockNote = ''
+    if ($r.state -eq 'blocked' -and $r.blocked_by) {
+        $blockNote = "<br><span style='color:var(--bad);font-size:12px'>waiting on {0}</span>" -f
+            (HtmlEncode (@($r.blocked_by) -join ', '))
+    }
+    W ("<tr><td>{0}</td><td><b>{1}</b>{2}</td><td><code>{3}</code></td><td><span class='pill {4}'>{5}</span></td></tr>" -f
+        $r.day, (HtmlEncode $r.title), $blockNote, (HtmlEncode $r.id),
+        (StateClass $r.state), (HtmlEncode (StateLabel $r.state)))
 }
 W '</table>'
 
@@ -162,7 +258,7 @@ if (@($data.blockers).Count -gt 0) {
 W '<h2>Waiting on Sushil</h2><table><tr><th>#</th><th>What</th><th>By day</th><th>State</th></tr>'
 foreach ($p in $data.prerequisites) {
     W ("<tr><td><code>{0}</code></td><td>{1}</td><td>{2}</td><td><span class='pill {3}'>{4}</span></td></tr>" -f
-        (HtmlEncode $p.id), (HtmlEncode $p.title), $p.due_day, (StateClass $p.state), (HtmlEncode $p.state))
+        (HtmlEncode $p.id), (HtmlEncode $p.title), $p.due_day, (StateClass $p.state), (HtmlEncode (StateLabel $p.state)))
 }
 W '</table>'
 

@@ -43,7 +43,7 @@ if ($NewSlug) {
     $slug = -join ($bytes | ForEach-Object { $alphabet[$_ % $alphabet.Length] })
 
     $toml = Get-Content -LiteralPath $tomlPath -Raw
-    $toml = [regex]::Replace($toml, '(?m)^SLUG\s*=\s*".*"$', ('SLUG = "{0}"' -f $slug))
+    $toml = [regex]::Replace($toml, '(?m)^SLUG\s*=\s*".*"[ \t]*\r?$', ('SLUG = "{0}"' -f $slug))
     Set-Content -LiteralPath $tomlPath -Value $toml -Encoding UTF8
     Write-Output "NEW_SLUG=$slug"
     Write-Warning 'The previous URL is now dead. That is the only revocation this design has.'
@@ -51,7 +51,7 @@ if ($NewSlug) {
 
 if ($Mode) {
     $toml = Get-Content -LiteralPath $tomlPath -Raw
-    $toml = [regex]::Replace($toml, '(?m)^PUBLIC_MODE\s*=\s*".*"$', ('PUBLIC_MODE = "{0}"' -f $Mode))
+    $toml = [regex]::Replace($toml, '(?m)^PUBLIC_MODE\s*=\s*".*"[ \t]*\r?$', ('PUBLIC_MODE = "{0}"' -f $Mode))
     Set-Content -LiteralPath $tomlPath -Value $toml -Encoding UTF8
     Write-Output "MODE=$Mode"
 }
@@ -110,10 +110,12 @@ foreach ($term in $cfg.verify) {
 if ($survivors.Count -gt 0) {
     throw ("REDACTION FAILED — these terms survived into the redacted page: {0}. Not deploying." -f ($survivors -join ', '))
 }
-# A redaction that strips the page to nothing is also a failure.
-foreach ($needed in @('<h2>Fifteen days</h2>', '<h2>Four depths</h2>', '<h2>Blockers</h2>', '<h2>Risks</h2>')) {
+# A redaction that strips the page to nothing is also a failure. These are heading PREFIXES,
+# not whole headings, so rewording the tail of a heading does not trip the guard — only an
+# actually-missing section does. If you rename a section, update the prefix here too.
+foreach ($needed in @('<h2>Where we are', '<h2>Checkpoints', '<h2>Four depths', '<h2>The work plan', '<h2>Blockers', '<h2>Risks')) {
     if ($redacted -notmatch [regex]::Escape($needed)) {
-        throw "REDACTION OVERREACHED — '$needed' is missing from the redacted page. Not deploying."
+        throw "REDACTION OVERREACHED — a section starting '$needed' is missing from the redacted page. Not deploying."
     }
 }
 Write-Output ("REDACTION_VERIFIED={0} terms absent, structure intact" -f @($cfg.verify).Count)
@@ -143,8 +145,8 @@ Set-Content -LiteralPath $genPath -Value $gen -Encoding UTF8
 Write-Output ("BAKED={0} ({1:N0} bytes full, {2:N0} redacted)" -f $genPath, $full.Length, $redacted.Length)
 
 # ---------------------------------------------------------------- 5. deploy
-$slugNow = ([regex]::Match((Get-Content -LiteralPath $tomlPath -Raw), '(?m)^SLUG\s*=\s*"(.*)"$')).Groups[1].Value
-$modeNow = ([regex]::Match((Get-Content -LiteralPath $tomlPath -Raw), '(?m)^PUBLIC_MODE\s*=\s*"(.*)"$')).Groups[1].Value
+$slugNow = ([regex]::Match((Get-Content -LiteralPath $tomlPath -Raw), '(?m)^SLUG\s*=\s*"([^"]*)"[ \t]*\r?$')).Groups[1].Value
+$modeNow = ([regex]::Match((Get-Content -LiteralPath $tomlPath -Raw), '(?m)^PUBLIC_MODE\s*=\s*"([^"]*)"[ \t]*\r?$')).Groups[1].Value
 
 # -BuildOnly just renders and bakes (used to verify the redaction), so it must not require a
 # slug — the slug is only needed to actually deploy. Return before the deploy-only guard.
