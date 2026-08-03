@@ -16,6 +16,30 @@ secrets*
 *.docx
 *.zip
 
+# Generated demo-status renders — embed the client contract number, submittal
+# identifiers and the thirteen-months-open observation. This repo is PUBLIC, so
+# these must NEVER be committed. Regenerated on every build.
+demo-status.html
+status-site/src/status.gen.js
+
+# The demo-status SOURCE and its narrative twin carry the same client detail as the
+# renders above (contract number, submittal identifiers, the reviewer observation). Both
+# were sitting untracked-but-stageable, i.e. one `git add .` from being published.
+# CLAUDE.md's rule for this repo is explicit: no client or project identifiers here.
+# Keep them local; the tracked status.json / STATUS.md deliberately carry none of these terms.
+demo-status.json
+DEMO-STATUS.md
+
+# The redaction patterns name the very identifiers they hide, so the list lives in
+# status-site/redactions.local.json (already covered by '*.local.*' above) rather than in
+# build-and-deploy.ps1. Listed here explicitly so the reason is discoverable.
+# status-site/redactions.local.json  -> matched by *.local.*
+
+# Cloudflare Wrangler local state / credentials
+status-site/.wrangler/
+status-site/node_modules/
+.dev.vars
+
 # Scheduled-run logs — local only, regenerated every run
 .codex/logs/
 

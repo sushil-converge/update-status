@@ -9,10 +9,24 @@ and what's next" without digging through eight code repositories.
 
 ## Start here
 
+Two tracks run in parallel and each has its own status page. **The pilot** is the full
+multi-month build; **the demo** is a 15-day sprint to put the client's own submittal log on a
+screen by 22 August. They share this repo's glossary, decisions and assistant instructions.
+
+> **The demo-track files are deliberately not in this repo.** `DEMO-STATUS.md`,
+> `demo-status.json` and `demo-status.html` name the contract and specific submittals, and this
+> repository is public — see the standing rule in [CLAUDE.md](CLAUDE.md). They stay on the
+> orchestrator's machine. The shareable, **redacted** view of the demo track is published at the
+> URL recorded in [status-site/README.md](status-site/README.md).
+
 | File | What it's for |
 |---|---|
-| **[STATUS.md](STATUS.md)** | The current state. Read this first. |
+| **[STATUS.md](STATUS.md)** | **Pilot** — the current state. Read this first. |
 | [status.json](status.json) | Same facts, machine-readable. For tooling and agents. |
+| `DEMO-STATUS.md` | **Demo** — the 15-day sprint to 22 August. Updates daily. *Local only, see below.* |
+| `demo-status.json` | Same facts, machine-readable. The source the HTML view renders from. *Local only.* |
+| `demo-status.html` | Rendered view of the demo track. Generated; regenerate with `pwsh scripts/render-demo-status.ps1`. *Local only.* |
+| [status-site/](status-site/) | Publishes a redacted demo view to a shareable URL. |
 | [DECISIONS.md](DECISIONS.md) | Why things are the way they are. Reverse-chronological. |
 | [CHANGELOG.md](CHANGELOG.md) | What changed each update, dated. |
 | [GLOSSARY.md](GLOSSARY.md) | WF codes, phase codes, repo names, personas. Decode the jargon. |

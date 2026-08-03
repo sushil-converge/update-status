@@ -1,0 +1,25 @@
+name = "construction-demo-status"
+main = "src/index.js"
+compatibility_date = "2026-01-01"
+
+# The worker is served at https://construction-demo-status.<your-subdomain>.workers.dev
+# and the page itself only exists at /b/<SLUG>. The bare root 404s deliberately, so the
+# hostname on its own reveals nothing.
+workers_dev = true
+
+[vars]
+# The unguessable slug — same shape as the Boardly links. Generate a fresh one with:
+#   pwsh build-and-deploy.ps1 -NewSlug
+# Changing it invalidates the old URL, which is the only revocation mechanism this
+# design has. Treat it as a password that lives in a browser history.
+SLUG = "qfrxva4rb77hed"
+
+# "full"      — everything, including the client name, contract number and the
+#               thirteen-months-open observation.
+# "redacted"  — contract number, submittal identifiers and the client-performance
+#               observation removed. Progress, gates, tiers and blockers stay.
+#
+# Use "redacted" if the audience is wider than the people who already know the client.
+PUBLIC_MODE = "redacted"
+
+
