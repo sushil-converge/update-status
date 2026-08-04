@@ -1,6 +1,6 @@
 # Project Status — Construction AI OS
 
-> **last_updated: 2026-08-03**
+> **last_updated: 2026-08-04**
 > **current_phase: P1 (deployment foundation) + P2 (trusted records), running in parallel**
 > **current_milestone: WF02 I1 — deployment package and operating guides**
 > **pilot_ready: no**
@@ -12,11 +12,11 @@
 
 ## In one paragraph
 
-The eight main services have been built and tested separately. Today, the API, shared contracts, and
-dashboard gained scoped read paths and a real submittal surface for **WF02**, the client-maintained
-submittal log. The basic design and deployment package have passed review, but live operating checks
-are not finished. **Nothing is connected to the client's live source folder, and the platform is not
-pilot-ready.**
+The eight main services have been built and tested separately. On 2026-08-04, the dashboard merged
+evidence-aware workflow-status surfaces, while the document pipeline added Tier B boundary hardening
+and native-text provenance preservation. The basic design and deployment package have passed review,
+but live operating checks are not finished. **Nothing is connected to the client's live source folder,
+and the platform is not pilot-ready.**
 
 ---
 
@@ -69,6 +69,12 @@ core and Docker build; contracts .NET and Python; dashboard build-and-test and v
 This is implementation and CI evidence only: staging, full operating proof, and pilot readiness
 remain open. A redacted demo status site was also deployed in `9b08d79` with successful endpoint
 and redaction checks.
+
+**Movement on 2026-08-04:** dashboard PR [#2](https://github.com/sushil-converge/construction-dashboard/pull/2)
+merged `7f02198`, adding evidence-aware workflow-status surfaces with a successful GitHub `verify`
+check. Pipeline commits `2cd07e7` and `bb09fd6` hardened Tier B producer boundaries and preserved
+native-text provenance, including added and updated tests. This is implementation and CI evidence
+only; no staging, full operating, or pilot validation was recorded today.
 
 ---
 
@@ -153,9 +159,9 @@ These are useful foundations, but they do **not** mean the full platform is depl
 | `unifier-connector` | Connects to Oracle Unifier | 2026-07-13 `5e8dcdd` |
 | `construction-email-agent` | Reads approved Microsoft 365 mailboxes | 2026-07-14 `ec1a61d` |
 | `construction-document-api` | Receives files and records their history | 2026-08-03 `c65db8c` |
-| `construction-document-pipeline` | Reads and classifies document contents | 2026-07-22 `d3554ae` |
+| `construction-document-pipeline` | Reads and classifies document contents | 2026-08-04 `bb09fd6` |
 | `construction-rules-engine` | Applies rules and updates registers | 2026-07-22 `dced448` |
-| `construction-dashboard` | User screens for Project and Corporate QMs | 2026-08-03 `0dda204` |
+| `construction-dashboard` | User screens for Project and Corporate QMs | 2026-08-04 `7f02198` |
 
 ---
 
