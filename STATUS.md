@@ -1,6 +1,6 @@
 # Project Status — Construction AI OS
 
-> **last_updated: 2026-08-05**
+> **last_updated: 2026-08-06**
 > **current_phase: P1 (deployment foundation) + P2 (trusted records), running in parallel**
 > **current_milestone: WF02 I1 — deployment package and operating guides**
 > **pilot_ready: no**
@@ -12,11 +12,11 @@
 
 ## In one paragraph
 
-The eight main services have been built and tested separately. On 2026-08-05, an independently
-reviewed document-pipeline candidate corrected the production Docling runtime by adding the pinned
-`libgl1` dependency and proved the MR027 page-one extraction trace. The basic design and deployment
-package have passed review, but live operating checks are not finished. **Nothing is connected to the
-client's live source folder, and the platform is not pilot-ready.**
+The eight main services have been built and tested separately. On 2026-08-06, an API candidate
+added protected dashboard endpoints for the reviewed MR027 fact and its PDF, including tenant,
+project, and capability checks. The basic design and deployment package have passed review, but
+live operating checks are not finished. **Nothing is connected to the client's live source folder,
+and the platform is not pilot-ready.**
 
 ---
 
@@ -82,6 +82,12 @@ independent review recorded 15 focused tests passing, a successful production-im
 checks, and one real-Docling MR027 page-one trace that returned `Naik-STV Joint Venture` with the
 expected provenance. This is candidate and local evidence only: it does not establish merge,
 staging, full operating, or pilot readiness.
+
+**Movement on 2026-08-06:** API candidate `f331150` exposes the reviewed MR027 fact and its PDF to
+an authorized Project QM dashboard session. It reads only one processed, unblocked evidence record,
+returns explicit unavailability when that record is not trustworthy, and adds focused integration
+tests for authorization, provenance, PDF streaming, and unavailable states. This is local candidate
+code; no test execution, merge, staging deployment, or pilot validation was verified in this update.
 
 ---
 
@@ -165,7 +171,7 @@ These are useful foundations, but they do **not** mean the full platform is depl
 | `construction-sync-agent` | Reads files from the shared folder | 2026-07-22 `50ef144` |
 | `unifier-connector` | Connects to Oracle Unifier | 2026-07-13 `5e8dcdd` |
 | `construction-email-agent` | Reads approved Microsoft 365 mailboxes | 2026-07-14 `ec1a61d` |
-| `construction-document-api` | Receives files and records their history | 2026-08-03 `c65db8c` |
+| `construction-document-api` | Receives files and records their history | 2026-08-06 candidate `f331150` |
 | `construction-document-pipeline` | Reads and classifies document contents | 2026-08-05 candidate `71e11e3` |
 | `construction-rules-engine` | Applies rules and updates registers | 2026-07-22 `dced448` |
 | `construction-dashboard` | User screens for Project and Corporate QMs | 2026-08-04 `7f02198` |
