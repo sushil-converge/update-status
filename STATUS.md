@@ -1,6 +1,6 @@
 # Project Status — Construction AI OS
 
-> **last_updated: 2026-08-06**
+> **last_updated: 2026-08-07**
 > **current_phase: P1 (deployment foundation) + P2 (trusted records), running in parallel**
 > **current_milestone: WF02 I1 — deployment package and operating guides**
 > **pilot_ready: no**
@@ -12,11 +12,11 @@
 
 ## In one paragraph
 
-The eight main services have been built and tested separately. On 2026-08-06, an API candidate
-added protected dashboard endpoints for the reviewed MR027 fact and its PDF, including tenant,
-project, and capability checks. The basic design and deployment package have passed review, but
-live operating checks are not finished. **Nothing is connected to the client's live source folder,
-and the platform is not pilot-ready.**
+The eight main services have been built and tested separately. On 2026-08-07, no completed code
+commit or executed test/build was verified; the team continued local demo and gateway-session
+planning, with a documented dashboard-availability defect still open. The basic design and
+deployment package have passed review, but live operating checks are not finished. **Nothing is
+connected to the client's live source folder, and the platform is not pilot-ready.**
 
 ---
 
@@ -88,6 +88,12 @@ an authorized Project QM dashboard session. It reads only one processed, unblock
 returns explicit unavailability when that record is not trustworthy, and adds focused integration
 tests for authorization, provenance, PDF streaming, and unavailable states. This is local candidate
 code; no test execution, merge, staging deployment, or pilot validation was verified in this update.
+
+**Movement on 2026-08-07:** no new completed Git commit or executed validation was verified across
+the inspected worktrees. Uncommitted handbook updates refine the local screen-share demo and
+S1a gateway-session dispatch. They document that `demo-up.ps1` can report success and open
+`localhost:3000` even when no dashboard is listening; this remains planning evidence, not an
+accepted fix or operating proof.
 
 ---
 
